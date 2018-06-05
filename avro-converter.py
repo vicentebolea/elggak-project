@@ -1,6 +1,3 @@
-
-# Import the schema, datafile and io submodules
-# from avro (easy_install avro)
 import sys
 import os.path
 from avro import schema, datafile, io
@@ -30,44 +27,17 @@ def write_avro_file(name, writer):
     # to write more than one record, of course)
     writer.append(data)
 
-def read_avro_file(name):
-    # Create a 'record' (datum) reader
-    # You can pass an 'expected=SCHEMA' kwarg
-    # if you want it to expect a particular
-    # schema (Strict)
-    rec_reader = io.DatumReader()
- 
-    # Create a 'data file' (avro file) reader
-    df_reader = datafile.DataFileReader(
-                    open(name),
-                    rec_reader
-                )
- 
-    # Read all records stored inside
-    for record in df_reader:
-        with open(record['filename'], 'wb') as f:
-           f.write(record['content'])
-
-        #print record['filename'], record['age']
-        #print record['address'], record['value']
-        # Do whatever read-processing you wanna do
-        # for each record here ...
- 
-
 # Create a 'record' (datum) writer
 rec_writer = io.DatumWriter(SCHEMA)
 
 df_writer = None
 
-if os.path.isfile(sys.argv[1]):
-  df_writer = datafile.DataFileWriter(
-  		open(sys.argv[1], 'ab+'),
-  		rec_writer,
-  		codec = 'deflate'
-  		)
+if os.path.isfile(sys.argv[2] + ".avro"):
+  sys.exit(0)
+
 else: 
   df_writer = datafile.DataFileWriter(
-  		open(sys.argv[1], 'ab+'),
+  		open(sys.argv[1] + "/" + sys.argv[2] + ".avro", 'wb+'),
   		rec_writer,
   		writers_schema = SCHEMA,
   		codec = 'deflate'
