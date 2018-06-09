@@ -36,7 +36,7 @@ def my_model(feature_shape, num_class):
 	#feature_data 
 	inputs = Input(feature_shape, name = "feature")
 	
-	with tf.name_scope('Conv1D-Dense-1'):
+	with tf.name_scope('Conv2D-Dense-1'):
 		feature = Conv2D(96, 16, 16, subsample=(4,4), activation='relu')(inputs)
 		feature = MaxPooling2D((3,3), strides=(2,2))(feature)
 		feature = Flatten()(feature)
