@@ -36,7 +36,7 @@ def my_model(feature_shape, num_class):
 	#feature_data 
 	inputs = Input(feature_shape, name = "feature")
 	
-	with tf.name_scope('Conv2D-Dense-1'):
+	with tf.name_scope('Conv1D-Dense-1'):
 		feature = Conv2D(96, 16, 16, subsample=(4,4), activation='relu')(inputs)
 		feature = MaxPooling2D((3,3), strides=(2,2))(feature)
 		feature = Flatten()(feature)
@@ -71,6 +71,12 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(LEARNING_RATE),
               metrics=['accuracy'])
 
+#Call back functions
+cb_tensorboard = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=20, batch_size=BATCH_SIZE,
+                                             write_graph=True, write_grads=True,
+                                             write_images=False, embeddings_freq=0,
+                                             embeddings_layer_names=None, embeddings_metadata=None)
+cb_ckpt = keras.callbacks.ModelCheckpoint('./checkpoint/weights.{epoch:02d}-{val_loss:.2f}.h5', monitor='val_loss', verbose=1,save_best_only=True, save_weights_only=False, mode='auto', period=10)
 
 #Train model
-model.fit(x_train,y_train, shuffle=True, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_data=(x_valid,y_valid))
+model.fit(x_train,y_train, shuffle=True, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_data=(x_valid,y_valid),callbacks=[cb_tensorboard, cb_ckpt])
