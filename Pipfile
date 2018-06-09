@@ -6,7 +6,9 @@ name = "pypi"
 [dev-packages]
 
 [packages]
-tensorflow-gpu = "==1.0.1"
+#tensorflow-gpu = "==1.0.1"
+#keras = "==1.2.1"
+tensorflow-gpu = "*"
 keras = "*"
 ipython = "*"
 pandas = "*"

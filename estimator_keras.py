@@ -15,7 +15,8 @@ from IPython import embed
 import h5py as h5
 
 batch_size = 128 
-num_classes = 25000 
+#num_classes = 9999 
+num_classes = 14950
 epochs = 10
 
 # input image dimensions
@@ -26,11 +27,11 @@ TEST_PATH = "/scratch/vicente/65000_images.hdf5"
 def load_data():
     train = h5.File(TRAIN_PATH)
 
-    train_y = train['Y'][40000:]
-    train_x = train['X'][40000:]
+    train_y = train['Y'][:]
+    train_x = train['X'][:]
 
-    test_y = train_y[20000:]
-    test_x = train_x[20000:]
+    test_y = train_y[60000:]
+    test_x = train_x[60000:]
 
     return (train_x, train_y), (test_x, test_y)
 
@@ -68,8 +69,8 @@ model.add(Dropout(0.25))
 model.add(Flatten())
 model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
-#model.add(Dense(num_classes, activation='softmax'))
-model.add(Dense(num_classes, activation='relu'))
+model.add(Dense(num_classes, activation='softmax'))
+#model.add(Dense(num_classes, activation='relu'))
 
 model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
