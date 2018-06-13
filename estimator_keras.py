@@ -11,13 +11,14 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
+import keras.utils.vis_utils as kutil
 from IPython import embed
 import h5py as h5
 
-batch_size = 1000 
+batch_size = 500 
 #num_classes = 9999 
 num_classes = 14950
-epochs = 10
+epochs = 5
 LEARNING_RATE = 1e-4
 
 # input image dimensions
@@ -34,11 +35,11 @@ def load_data():
     train_y = dataset_y[:50000]
     train_x = dataset_x[:50000]
 
-    test_y = dataset_y[50000:60000]
-    test_x = dataset_x[50000:60000]
+    valid_y = dataset_y[50000:55000]
+    valid_x = dataset_x[50000:55000]
 
-    valid_y = dataset_y[60000:]
-    valid_x = dataset_x[60000:]
+    test_y = dataset_y[55000:]
+    test_x = dataset_x[55000:]
 
 
     return (train_x, train_y), (test_x, test_y), (valid_x, valid_y)
@@ -72,10 +73,26 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 y_valid = keras.utils.to_categorical(y_valid, num_classes)
 
 model = Sequential()
-model.add(Conv2D(32, kernel_size=(3, 3),
+#model.add(Conv2D(32, kernel_size=(4, 4),
+#                 activation='relu',
+#                 input_shape=input_shape))
+##model.add(Conv2D(64, (3, 3), activation='relu'))
+#model.add(MaxPooling2D(pool_size=(2, 2)))
+#model.add(Dropout(0.25))
+#model.add(Flatten())
+#model.add(Dense(128, activation='relu'))
+#model.add(Dropout(0.25))
+#model.add(Dense(num_classes, activation='softmax'))
+
+model.add(Conv2D(32, kernel_size=(4, 4),
                  activation='relu',
                  input_shape=input_shape))
-#model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(64, (4, 4), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(128, (4, 4), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(128, (4, 4), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
 model.add(Flatten())
@@ -88,12 +105,24 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               #optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
+kutil.plot_model(model, to_file='model.png', show_shapes=True, show_layer_names=True)
+
+
+cb_tensorboard = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=20, batch_size=batch_size,
+                                             write_graph=True, write_grads=True,
+                                             write_images=False, embeddings_freq=0,
+                                             embeddings_layer_names=None, embeddings_metadata=None)
+
+cb_ckpt = keras.callbacks.ModelCheckpoint('./logs/weights.{epoch:02d}-{val_loss:.2f}.h5', monitor='val_loss', verbose=1,save_best_only=True, save_weights_only=False, mode='auto', period=10)
+
 model.fit(x_train, y_train,
           batch_size=batch_size,
           shuffle=True,
           epochs=epochs,
           verbose=1,
-          validation_data=(x_valid, y_valid))
+          validation_data=(x_valid, y_valid),
+          callbacks=[cb_tensorboard, cb_ckpt])
+
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])

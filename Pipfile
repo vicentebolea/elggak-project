@@ -13,6 +13,8 @@ keras = "*"
 ipython = "*"
 pandas = "*"
 tables = "*"
+pydot = "*"
+pillow = "*"
 
 [requires]
 python_version = "2.7"
