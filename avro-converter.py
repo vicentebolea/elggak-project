@@ -32,12 +32,16 @@ rec_writer = io.DatumWriter(SCHEMA)
 
 df_writer = None
 
-if os.path.isfile(sys.argv[2] + ".avro"):
-  sys.exit(0)
+if os.path.isfile(sys.argv[1]):
+  		open(sys.argv[1], 'ab+'),
+  		rec_writer,
+  		codec = 'deflate'
+  		)
+  #sys.exit(0)
 
 else: 
   df_writer = datafile.DataFileWriter(
-  		open(sys.argv[1] + "/" + sys.argv[2] + ".avro", 'wb+'),
+  		open(sys.argv[1], 'wb+'),
   		rec_writer,
   		writers_schema = SCHEMA,
   		codec = 'deflate'
