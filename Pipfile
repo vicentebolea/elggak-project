@@ -1,20 +1,19 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 verify_ssl = true
 name = "pypi"
 
 [dev-packages]
 
 [packages]
-#tensorflow-gpu = "==1.0.1"
-#keras = "==1.2.1"
-tensorflow-gpu = "*"
-keras = "*"
-ipython = "*"
+tensorflow-gpu = "==1.0.1"
+keras = "==1.2.1"
+#tensorflow-gpu = "*"
+#keras = "*"
+ipython = "==4.1.2"
 pandas = "*"
-tables = "*"
-pydot = "*"
 pillow = "*"
+"h5py" = "*"
 
 [requires]
 python_version = "2.7"
